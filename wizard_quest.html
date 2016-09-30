@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lol game</title>
+	<style type="text/css" media="screen">
+	canvas{
+		background:url(images/bg.png);
+	}
+	</style>
+</head>
+<body>
+<div style="display: none;">
+	<img src="images/bat1.png" id="right">
+	<img src="images/bat1m.png" id="rightm">
+	<img src="images/bat1d.png" id="rightd">
+	<img src="images/bat2.png" id="left">
+	<img src="images/bat2m.png" id="leftm">
+	<img src="images/bat2d.png" id="leftd">
+	<img src="images/fireball.png" id="fire">
+	<img src="images/badguy1.jpg" id="badguy">
+	<img src="images/badguy6.jpg" id="badguydead">
+
+
+
+
+</div>
+<h1><~~~~~~~~~~~~~~~~!!!Wizard Quest!!!~~~~~~~~~~~~~~~~></h1>
+<canvas id="canvas" width="1300" height="800" style="border: 1px solid #000000;"></canvas>
+<script>
+	var ctx = document.getElementById("canvas").getContext("2d");
+	var x = 200;
+	var y = 490;
+	var z = 0;
+	var k = 0;
+	var badx = 1000
+	var bady = 250
+	var mana = 200;
+	var count = 0;
+	var flag = 'right';
+	var mvright = 0;
+	var mvleft = 0;
+	var fireball = false;
+	var badguyhp = 200;
+	var img = document.getElementById('right');
+	var img1 = document.getElementById('rightm');
+	var img2 = document.getElementById('rightd');
+	var limg = document.getElementById('left');
+	var limg1 = document.getElementById('leftm');
+	var limg2 = document.getElementById('leftd');
+	var shoot = document.getElementById('fire');
+	var badguy = document.getElementById('badguy');
+
+
+
+	document.onkeypress = function(keyCode){
+		if(keyCode.code == 'KeyE'){
+			if(mana == 0){
+				console.log('No mana!')
+				return
+			}
+			console.log('fireball!');
+			mana -= 20;
+			if(flag == 'right'){
+				z = x + 50;
+			}
+			if(flag == 'left'){
+				z = x - 50;
+			}
+			k = y + 130;
+			fireball = true;
+			var handle = setInterval(function(){
+				console.log(z)
+				if(flag == 'right'){
+					z += 10;
+				}
+				if(flag == 'left'){
+					z -= 10;
+				}
+				if(z < 0){
+					fireball = false;
+					clearInterval(handle);
+				}if(z >= 1000){
+					badguyhp -= 20;
+					fireball = false;
+					clearInterval(handle);
+				}
+			}, 10)
+		}
+	}
+
+	document.onkeydown = function(keyCode){
+		if(keyCode.code == 'KeyD'){
+			flag ='right'
+			if(mvright == 6){
+				mvright = 0;
+			}else{
+				mvright ++;
+			}
+			console.log(mvright);
+			x += 10;
+		}
+		if(keyCode.code == 'KeyA'){
+			flag = 'left';
+			if(mvleft == 6){
+				mvleft = 0;
+			}else{
+				mvleft ++;
+			}
+			x -= 10;
+		}
+		if(keyCode.code == 'KeyW'){
+			y -= 5;
+		}
+		if(keyCode.code == 'KeyS'){
+			y += 5;
+		}
+		if(keyCode.code == 'Space'){
+			var handle = setInterval(function(){
+				if(count >= 60){
+					console.log('STOPPING')
+					clearInterval(handle);
+					count = 0;
+				}
+				else if(count <= 20){
+					y -= 10
+				}
+				else if(count >= 40){
+					y += 10
+				}
+				count++
+				console.log(count)
+			}, 10); 
+			
+		}
+	}
+	function update(){
+		ctx.clearRect(0,0,1300,800);
+		if(mvright <=2 && flag == 'right'){
+			ctx.drawImage(img, x, y);
+		}else if(mvright > 2 && mvright <= 4 && flag == 'right'){
+			ctx.drawImage(img1, x, y);
+		}else if(mvright > 4 && flag == 'right'){
+			ctx.drawImage(img2, x, y);
+		}else if(mvleft <= 2 && flag == 'left'){
+			ctx.drawImage(limg, x, y);
+		}else if(mvleft > 2 && mvleft <= 4  && mvleft && flag == 'left'){
+			ctx.drawImage(limg1, x, y);
+		}else if(mvleft > 4 && flag == 'left'){
+			ctx.drawImage(limg2, x, y);
+		}if(fireball == true){
+			ctx.drawImage(shoot, z, k);
+		}
+		if(badguyhp <= 0){
+
+			badguy = document.getElementById('badguydead');
+			badx = 900
+			bady = 600;
+		}
+		ctx.drawImage(badguy, badx, bady)
+		ctx.font="30px Arial";
+		ctx.fillStyle = "blue"
+		ctx.fillText('Mana:', 40, 40);
+		ctx.beginPath()
+		ctx.rect(130, 20, mana, 20);
+		ctx.fillStyle = "blue"
+		ctx.fill();
+
+		ctx.font="30px Arial";
+		ctx.fillStyle = "red"
+		ctx.fillText('BadGuy HP:', 800, 40);
+		ctx.beginPath()
+		ctx.rect(980, 20, badguyhp, 20);
+		ctx.fillStyle = "red"
+		ctx.fill();
+
+	}
+	function checkmana(){
+		if(mana <= 200){
+			mana += 20;
+		}
+	}
+	setInterval(update, 10)
+	setInterval(checkmana, 3000)
+</script>
+</body>
+</html>
